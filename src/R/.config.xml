@@ -1,0 +1,97 @@
+<!--
+  developed by: Adrian Pasculescu
+  http://pawsonlab.mshr.on.ca
+  Copyright: GNU License, Version 3; you may not use this application 
+  except in compliance with the License. 
+  You may obtain a copy of the License at www.gnu.org/licenses. 
+-->
+
+<!--
+  must have installed: yum install expat-devel  (or libexpat-devel)
+  cpan install XML::Parser
+  cpan install XML::XPath
+-->
+
+<config>
+  <db> <!-- related to the database mysql server -->
+    <host>arrowhead.mshri.on.ca</host> <!-- database server name (or ip address -->
+    <database>TestLab_cf</database> <!-- name of the databse that contains the CoreFlow Analysis table and the data (molecular biology...) -->
+                                     <!-- create database TestLab_cf; -->
+    <user passwd="TestLab_intern">TestLab_intern</user> 
+    <!-- /* this is the webserver */
+         GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP, ALTER, CREATE TEMPORARY TABLES ON TestLab_cf.* to 'TestLab_intern'@'192.197.251.109' identified by 'TestLab_intern'; 
+         GRANT ALTER ROUTINE,CREATE ROUTINE,LOCK TABLES, EXECUTE ON TestLab_cf.* to 'TestLab_intern'@'192.197.251.109' identified by 'TestLab_intern';
+         /* this is the app server */
+         GRANT SELECT,INSERT,UPDATE,DELETE,ALTER,DROP, CREATE, CREATE TEMPORARY TABLES ON TestLab_cf.* to 'TestLab_intern'@'10.197.104.69' identified by 'TestLab_intern';
+         GRANT ALTER ROUTINE,CREATE ROUTINE, EXECUTE ON TestLab_cf.* to 'TestLab_intern'@'10.197.104.69' identified by 'TestLab_intern';
+     ... -->
+    <user_public passwd="TestLab_extern">TestLab_extern</user_public> 
+    <!-- GRANT SELECT, CREATE TEMPORARY TABLES ON TestLab_cf.* to 'TestLab_extern'@'192.197.251.109' identified by 'TestLab_extern';
+         GRANT EXECUTE ON * to 'TestLab_extern'@'192.197.251.109' identified by 'TestLab_extern';
+         GRANT SELECT, CREATE TEMPORARY TABLES ON TestLab_cf.* to 'TestLab_extern'@'10.197.104.69' identified by 'TestLab_extern'; 
+         GRANT EXECUTE ON TestLab_cf.* to 'TestLab_extern'@'10.197.104.69' identified by 'TestLab_extern';
+      -->
+    
+    <custom_analysis_table>MB_CUSTOM_ANALYSIS</custom_analysis_table> <!-- if changed one should grep in all perl php files to update manually sorry :-) -->
+  </db>
+  
+  <general>
+    <app_name>TestLab CoreFlow</app_name>
+    <allow_view_IPs>.*</allow_view_IPs> <!-- regex pattern of  IP address allowed to view the app, all others are denied -->
+    <allow_wx_IPs>(10\.197\.11.\..*)|(130\.225\.75\.212)|(174\.93\.81\.248)</allow_wx_IPs> <!-- regex pattern of  IP address allowed to insert/delete/update (Write) into DB or eXecute files, all others are denied -->
+  </general>
+  
+  <icons_location>/var/www/html/analysis.mshri.on.ca/TestLab/CoreFlow/images/Icons/</icons_location> <!-- full path to icons location -->
+  
+  <Title>TestLab CoreFlow</Title>
+  
+  <R> <!-- related to location of R files (R server can be different from the app server - but must have apache installed) -->
+  	<cgi_dir>http://killarney.mshri.on.ca/cgi-bin/TestLab/CoreFlow/R/</cgi_dir> <!-- shows we have a different server for running R, per etc -->
+  	<temp_dir>/var/www/cgi-bin/TestLab/CoreFlow/Temp/</temp_dir>  <!-- this is where we store temporary files on the R server-->
+  	<R_location>/home/pasculescu/Downloads/R.2.14.1/R-2.14.1/bin/R</R_location> <!-- full path to invoke R -->
+  	<perl_location>/usr/bin/env perl</perl_location> <!-- full path to invoke perl -->
+  	<python_location>/usr/local/bin/python</python_location> <!-- full path to invoke python -->
+  </R>
+  
+  <svn> <!-- related to the SVN or other versioning server -->
+  	<!-- For setup go to your svn server and follow following steps: http://civicactions.com/blog/2010/may/25/how_set_svn_repository_7_simple_steps -->
+  	
+  	<!--
+  	rpm -Uvh http://repo.webtatic.com/yum/centos/5/latest.rpm
+		yum install - -enablerepo=webtatic git-all 
+		yum install - -enablerepo=webtatic gitweb 
+
+ Installing: subversion                   ####################### [ 1/18] 
+  Installing: cvs                          ####################### [ 2/18] 
+  Installing: cvsps                        ####################### [ 3/18] 
+  Installing: subversion-perl              ####################### [ 4/18] 
+  Installing: emacs-common                 ####################### [ 5/18] 
+  Installing: perl-TermReadKey             ####################### [ 6/18] 
+  Installing: perl-Error                   ####################### [ 7/18] 
+  Installing: perl-Net-SMTP-SSL            ####################### [ 8/18] 
+  Installing: perl-Authen-SASL             ####################### [ 9/18] 
+  Installing: git                          ####################### [10/18] 
+  Installing: perl-Git                     ####################### [11/18] 
+  Installing: gitk                         ####################### [12/18] 
+  Installing: git-gui                      ####################### [13/18] 
+  Installing: git-email                    ####################### [14/18] 
+  Installing: git-cvs                      ####################### [15/18] 
+  Installing: git-svn                      ####################### [16/18] 
+  Installing: emacs-git                    ####################### [17/18] 
+  Installing: git-all                      ####################### [18/18] 
+
+Installed: git-all.x86_64 0:1.7.10.2-1.w5
+Dependency Installed: cvs.x86_64 0:1.11.22-11.el5 cvsps.x86_64 0:2.1-7.el5 emacs-common.x86_64 0:21.4-24.el5 emacs-git.x86_64 0:1.7.10.2-1.w5 git.x86_64 0:1.7.10.2-1.w5 git-cvs.x86_64 0:1.7.10.2-1.w5 git-email.x86_64 0:1.7.10.2-1.w5 git-gui.x86_64 0:1.7.10.2-1.w5 git-svn.x86_64 0:1.7.10.2-1.w5 gitk.x86_64 0:1.7.10.2-1.w5 perl-Authen-SASL.noarch 0:2.13-1.el5.rf perl-Error.noarch 1:0.17010-1.el5 perl-Git.x86_64 0:1.7.10.2-1.w5 perl-Net-SMTP-SSL.noarch 0:1.01-1.el5.rf perl-TermReadKey.x86_64 0:2.30-4.el5 subversion.x86_64 0:1.6.13-0.1.el5.rf subversion-perl.x86_64 0:1.6.13-0.1.el5.rf
+Complete!
+
+
+  	-->
+  	
+  	<svn_server>http://killarney.mshri.on.ca/cgi-bin/TestLab/CoreFlow/R/</svn_server> <!-- should be behind firewall -->
+  	<svn_home>/var/www/cgi-bin/TestLab/CoreFlow/R/</svn_home> <!-- needed by git if run as apache to set a home directory -->
+  	<!-- http://gideontsang.wordpress.com/2009/10/13/gitweb-on-ubuntujaunty/ to setup gitweb -->
+  	<svn_repo_location>/var/www/cgi-bin/TestLab/CoreFlow/R/git/</svn_repo_location>
+  	
+  </svn>	
+  
+</config>
